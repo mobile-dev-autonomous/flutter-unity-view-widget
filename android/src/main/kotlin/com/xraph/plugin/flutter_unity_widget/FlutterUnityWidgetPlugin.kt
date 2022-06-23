@@ -20,21 +20,28 @@ import io.flutter.embedding.engine.plugins.lifecycle.FlutterLifecycleAdapter
 class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
     private var lifecycle: Lifecycle? = null
     private var flutterPluginBinding: FlutterPluginBinding? = null
+    var registerLib = false
 
     override fun onAttachedToEngine(@NonNull binding: FlutterPluginBinding) {
         Log.d(LOG_TAG, "onAttachedToEngine")
         flutterPluginBinding = binding
+        if(lifecycle == null){
+            registerLib = false
+            return
+        }
+        registerLib = true
         binding
-                .platformViewRegistry
-                .registerViewFactory(
-                        VIEW_TYPE,
-                        FlutterUnityWidgetFactory(
-                                binding.binaryMessenger,
-                                object : LifecycleProvider {
-                                    override fun getLifecycle(): Lifecycle {
-                                        return lifecycle!!
-                                    }
-                                }))
+            .platformViewRegistry
+            .registerViewFactory(
+                VIEW_TYPE,
+                FlutterUnityWidgetFactory(
+                    binding.binaryMessenger,
+                    object : LifecycleProvider {
+                        override fun getLifecycle(): Lifecycle {
+                            return lifecycle!!
+                        }
+                    }))
+
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPluginBinding) {
@@ -52,6 +59,22 @@ class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
         Log.d(LOG_TAG, "onAttachedToActivity")
         handleActivityChange(binding.activity)
         lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
+        //https://console.firebase.google.com/project/rove-production-7587c/crashlytics/app/android:to.rove.app.mobile/issues/863a43131af6fb6e73e6d365ef304030?time=last-thirty-days&sessionEventKey=62B3C12000B8000123CBE3826A065EE3_1690686326170199642
+        if (!registerLib){
+            flutterPluginBinding?.let{
+                it.platformViewRegistry
+                .registerViewFactory(
+                    VIEW_TYPE,
+                    FlutterUnityWidgetFactory(
+                        it.binaryMessenger,
+                        object : LifecycleProvider {
+                            override fun getLifecycle(): Lifecycle {
+                                return lifecycle!!
+                            }
+                        }))
+            }
+
+        }
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
