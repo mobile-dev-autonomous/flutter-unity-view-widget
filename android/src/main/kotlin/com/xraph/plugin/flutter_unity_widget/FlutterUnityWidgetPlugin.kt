@@ -25,7 +25,7 @@ class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
     override fun onAttachedToEngine(@NonNull binding: FlutterPluginBinding) {
         Log.d(LOG_TAG, "onAttachedToEngine")
         flutterPluginBinding = binding
-        if(lifecycle == null){
+        if (lifecycle == null) {
             registerLib = false
             return
         }
@@ -40,7 +40,8 @@ class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
                         override fun getLifecycle(): Lifecycle? {
                             return lifecycle
                         }
-                    }))
+                    })
+            )
 
     }
 
@@ -60,18 +61,19 @@ class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
         handleActivityChange(binding.activity)
         lifecycle = FlutterLifecycleAdapter.getActivityLifecycle(binding)
         //https://console.firebase.google.com/project/rove-production-7587c/crashlytics/app/android:to.rove.app.mobile/issues/863a43131af6fb6e73e6d365ef304030?time=last-thirty-days&sessionEventKey=62B3C12000B8000123CBE3826A065EE3_1690686326170199642
-        if (!registerLib){
-            flutterPluginBinding?.let{
+        if (!registerLib) {
+            flutterPluginBinding?.let {
                 it.platformViewRegistry
-                .registerViewFactory(
-                    VIEW_TYPE,
-                    FlutterUnityWidgetFactory(
-                        it.binaryMessenger,
-                        object : LifecycleProvider {
-                            override fun getLifecycle(): Lifecycle {
-                                return lifecycle!!
-                            }
-                        }))
+                    .registerViewFactory(
+                        VIEW_TYPE,
+                        FlutterUnityWidgetFactory(
+                            it.binaryMessenger,
+                            object : LifecycleProvider {
+                                override fun getLifecycle(): Lifecycle? {
+                                    return lifecycle
+                                }
+                            })
+                    )
             }
 
         }
@@ -116,7 +118,8 @@ class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
      * <p>This is used in the case where a direct Lifecycle/Owner is not available.
      */
     @SuppressLint("NewApi")
-    private class ProxyLifecycleProvider(activity: Activity) : Application.ActivityLifecycleCallbacks, LifecycleOwner, LifecycleProvider {
+    private class ProxyLifecycleProvider(activity: Activity) :
+        Application.ActivityLifecycleCallbacks, LifecycleOwner, LifecycleProvider {
         private val lifecycle = LifecycleRegistry(this)
         private var registrarActivityHashCode: Int = 0
 
