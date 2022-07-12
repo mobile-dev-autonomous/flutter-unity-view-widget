@@ -222,7 +222,7 @@ class FlutterUnityWidgetController(
     }
 
     override fun onUnityPlayerQuitted() {
-        TODO("Not yet implemented")
+
     }
 
     //#endregion
@@ -247,6 +247,23 @@ class FlutterUnityWidgetController(
         Log.d(LOG_TAG, "onPause")
         UnityPlayerUtils.viewStaggered = true
         UnityPlayerUtils.pause()
+    }
+
+    override fun onStop(owner: LifecycleOwner) {
+        super.onStop(owner)
+//        if(android.os.Build.VERSION.SDK_INT >= 21 )
+//        {
+//            if(context != null && context is Activity){
+//                context.finishAndRemoveTask()
+//                context.finish()
+//            }
+//        }
+//        else
+//        {
+//            if(context != null && context is Activity){
+//                context.finish()
+//            }
+//        }
     }
 
     override fun onDestroy(owner: LifecycleOwner) {
@@ -298,6 +315,7 @@ class FlutterUnityWidgetController(
                 })
             }
         } catch (e: Exception) {
+            e.printStackTrace()
             if (methodChannelResult != null) {
                 methodChannelResult!!.error("FLUTTER_UNITY_WIDGET", e.message, e)
                 methodChannelResult!!.success(false)
