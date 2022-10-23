@@ -235,6 +235,9 @@ class FlutterUnityWidgetController(
 
     override fun onResume(owner: LifecycleOwner) {
         Log.d(LOG_TAG, "onResume")
+        if(UnityPlayerUtils.unityPaused){
+            return;
+        }
         reattachToView()
         if(UnityPlayerUtils.viewStaggered && UnityPlayerUtils.unityLoaded) {
             this.createPlayer()
