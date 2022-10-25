@@ -49,7 +49,7 @@ class FlutterUnityWidgetController(
     private var disposed: Boolean = false
     private var attached: Boolean = false
     private var loadedCallbackPending: Boolean = false
-
+    private var isPlayerPause = false
     init {
         UnityPlayerUtils.controllers.add(this)
 
@@ -138,6 +138,7 @@ class FlutterUnityWidgetController(
                 result.success(true)
             }
             "unity#pausePlayer" -> {
+                isPlayerPause = true
                 invalidateFrameIfNeeded()
                 UnityPlayerUtils.pause()
                 result.success(true)
@@ -147,6 +148,7 @@ class FlutterUnityWidgetController(
                 result.success(true)
             }
             "unity#resumePlayer" -> {
+                isPlayerPause = false
                 invalidateFrameIfNeeded()
                 UnityPlayerUtils.resume()
                 result.success(true)
@@ -235,7 +237,8 @@ class FlutterUnityWidgetController(
 
     override fun onResume(owner: LifecycleOwner) {
         Log.d(LOG_TAG, "onResume")
-        if(UnityPlayerUtils.unityPaused){
+        if(isPlayerPause){
+            Log.d(LOG_TAG, "onResume but unity paused")
             return;
         }
         reattachToView()
