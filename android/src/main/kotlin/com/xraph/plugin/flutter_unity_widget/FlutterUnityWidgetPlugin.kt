@@ -51,7 +51,7 @@ class FlutterUnityWidgetPlugin : FlutterPlugin, ActivityAware {
     }
 
     companion object {
-        internal const val LOG_TAG = "FUWPlugin"
+        internal const val LOG_TAG = "Rove"
         private const val VIEW_TYPE = "plugin.xraph.com/unity_view"
     }
 

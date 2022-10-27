@@ -102,6 +102,6 @@ class OverrideUnityActivity : UnityPlayerActivity() {
 
     companion object {
         var instance: OverrideUnityActivity? = null
-        internal val LOG_TAG = "OverrideUnityActivity"
+        internal val LOG_TAG = "Rove"
     }
 }

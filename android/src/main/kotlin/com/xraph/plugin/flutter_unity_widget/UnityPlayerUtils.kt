@@ -18,7 +18,7 @@ import java.util.concurrent.CopyOnWriteArraySet
 class UnityPlayerUtils {
 
     companion object {
-        private const val LOG_TAG = "UnityPlayerUtils"
+        private const val LOG_TAG = "Rove"
 
         var controllers: ArrayList<FlutterUnityWidgetController> = ArrayList()
         var unityPlayer: CustomUnityPlayer? = null

@@ -13,7 +13,7 @@ import com.unity3d.player.UnityPlayer
 class CustomUnityPlayer(context: Activity, upl: IUnityPlayerLifecycleEvents?) : UnityPlayer(context, upl) {
 
     companion object {
-        internal const val LOG_TAG = "CustomUnityPlayer"
+        internal const val LOG_TAG = "Rove"
     }
 
     override fun onConfigurationChanged(newConfig: Configuration?) {

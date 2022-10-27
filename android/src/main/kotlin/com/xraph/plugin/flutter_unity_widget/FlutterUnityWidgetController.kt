@@ -5,6 +5,7 @@ import android.app.Activity
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
+import android.content.res.Configuration
 import android.graphics.Color
 import android.os.Build
 import android.os.Handler
@@ -38,7 +39,7 @@ class FlutterUnityWidgetController(
         IUnityPlayerLifecycleEvents {
 
     //#region Members
-    private val LOG_TAG = "FlutterUnityController"
+    private val LOG_TAG = "Rove"
     private var lifecycleProvider: LifecycleProvider = lifecycleProvider
     private var options: FlutterUnityWidgetOptions = FlutterUnityWidgetOptions()
 
@@ -236,14 +237,11 @@ class FlutterUnityWidgetController(
     }
 
     override fun onResume(owner: LifecycleOwner) {
-        Log.d(LOG_TAG, "onResume")
-        if(isPlayerPause){
-            Log.d(LOG_TAG, "onResume but unity paused")
-            return;
-        }
+        Log.d(LOG_TAG, "onResume ${context?.resources?.configuration?.orientation}")
         reattachToView()
         if(UnityPlayerUtils.viewStaggered && UnityPlayerUtils.unityLoaded) {
             this.createPlayer()
+
             refocusUnity()
             UnityPlayerUtils.viewStaggered = false
         }
@@ -307,10 +305,13 @@ class FlutterUnityWidgetController(
 
     private fun createPlayer() {
         try {
+            Log.d(LOG_TAG, "createPlayer")
+
             if (UnityPlayerUtils.activity != null) {
                 UnityPlayerUtils.createUnityPlayer( this, object : OnCreateUnityViewCallback {
                     override fun onReady() {
                         // attach unity to controller
+                        Log.d(LOG_TAG, "createPlayer onReady");
                         attachToView()
 
                         if (methodChannelResult != null) {
@@ -356,14 +357,18 @@ class FlutterUnityWidgetController(
 
     private fun attachToView() {
         if (UnityPlayerUtils.unityPlayer == null) return
-        Log.d(LOG_TAG, "Attaching unity to view")
+        if(context?.resources?.configuration?.orientation != Configuration.ORIENTATION_LANDSCAPE){
+            Log.d(LOG_TAG, "attachToView ${context?.resources?.configuration?.orientation}")
+            return
+        }
+        Log.d(LOG_TAG, "Attaching unity to view ${UnityPlayerUtils.unityPlayer!!.parent != null} ${UnityPlayerUtils.unityPlayer!!.z}")
 
         if (UnityPlayerUtils.unityPlayer!!.parent != null) {
             (UnityPlayerUtils.unityPlayer!!.parent as ViewGroup).removeView(UnityPlayerUtils.unityPlayer)
         }
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            UnityPlayerUtils.unityPlayer!!.z = -1f
+            UnityPlayerUtils.unityPlayer!!.z = 100f
         }
 
         // add unity to view
@@ -380,6 +385,10 @@ class FlutterUnityWidgetController(
     }
 
     fun reattachToView() {
+        Log.d(LOG_TAG, "reattachToView")
+        if(context?.resources?.configuration?.orientation == Configuration.ORIENTATION_LANDSCAPE){
+            Log.d(LOG_TAG, "onResume ${context?.resources?.configuration?.orientation}")
+        }
         if (UnityPlayerUtils.unityPlayer!!.parent != view) {
             this.attachToView()
             Handler(Looper.getMainLooper()).post {
